@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <string>
 
+#include <fstream>
 
 int main()
 {
@@ -31,8 +32,18 @@ int main()
 	int s = accept(sockfd, (struct sockaddr *)&sock_addr,&len);
 
 	// パケットを受け取る。
-	char buf[3];
-	recv(s, buf, sizeof(buf), 0);
+	char buf[1024*1024];
+	std::cout << "count" + len << std::endl;
+	int recv_status = recv(s, buf, sizeof(buf)-1, 0);
+	std::cout << recv_status << std::endl;
 	std::cout << buf << std::endl;
 	close(sockfd);
+
+	// 送られてきた内容をテキストファイルに書き込む。
+	std::ofstream writing_file;
+	std::string filename = "sample2.txt";
+	writing_file.open(filename, std::ios::out);
+	std::string writing_text = buf;
+	writing_file << writing_text << std::endl;
+	writing_file.close();
 }
